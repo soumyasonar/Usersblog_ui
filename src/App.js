@@ -5,6 +5,7 @@ import UsersList from './UsersList'
 import Usershow from './Usershow'
 import Postlist from './Postlist'
 import Postshow from './Postshow'
+import Commentlist from './Commentlist'
 
 function App(props){
     return(
@@ -15,6 +16,7 @@ function App(props){
             <Link to="/users"></Link>
             <Link to="/postlist">| Posts</Link>
             <Link to="/posts"></Link>
+            <Link to="/commentlist">| Comments</Link>
            
 
             <Route path="/" component={Home}  exact={true}/>
@@ -22,6 +24,7 @@ function App(props){
             <Route path="/users/:id" component={Usershow} exact={true}/>
             <Route path="/postlist" component={Postlist}/>
             <Route path="/posts/:id" component={Postshow}/>
+            <Route path="/commentlist" component={Commentlist}/>
             
         </div>
         </BrowserRouter>

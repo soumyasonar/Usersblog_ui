@@ -1,63 +1,43 @@
-import React from 'react' 
-import axios from 'axios'
+import React from 'react'
 import {Link} from 'react-router-dom'
+import { connect } from 'react-redux'
+import {startGetComments} from './action/commentAction'
 class Postshow extends React.Component {
-    constructor(){
-        super()
-        this.state={
-            user:{},
-            posts:{},
-            comments:[]
-        }
+     componentDidMount(){
+      this.props.dispatch(startGetComments())
     }
-    componentDidMount(){
-        const id = this.props.match.params.id
-        //const title=this.props.match.params.title
-        axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`)
-        .then((response)=>{
-            const posts=response.data
-            this.setState({posts})
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
-        axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
-        .then((response)=>{
-            const user=response.data
-            this.setState({user})
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
-        axios.get(`https://jsonplaceholder.typicode.com/comments?postId=${id}`)
-        .then((response)=>{
-            const comments=response.data
-            this.setState({comments})
-        })
-        .catch((err)=>{
-            console.log(err)
-        })
-    }
-   
-    render() {
-        
-        return (
-            <div> 
-                <h2>UserName: {this.state.user.name}</h2>
-                <h2>Title: {this.state.posts.title}</h2>
-                <h2>Body:<br/>{this.state.posts.body}</h2><br/>
-                <h1>Comments: </h1>
-                <ul>
-                    {this.state.comments.map((comment)=>{
-                        return <li key={comment.id}>{comment.body}</li>
-                    })}
-                </ul>
-                <hr/>
-                <h4><Link to={`/users/${this.state.posts.id}`}>More Posts Of Author-{this.state.user.name}</Link></h4>
-                
-            </div> 
-        )
+render() {
+const user = this.props.users.find(user=> user.id === this.props.post.userId)
+       return (
+             <div>
+                 <h2>USER NAME : {user.name}</h2>
+                 <h3>TITLE : {this.props.post.title} </h3>
+                 <h3>BODY : {this.props.post.body} </h3>
+                 <h4>COMMENTS </h4>
+                      <ul>{
+                           this.props.postComments.map(comment=>{
+                                  return <li key={comment.id}>{comment.body} </li>
+                         })}
+                    </ul>
+                   <Link to={`/users/${user.id}`} >More posts of the author - {user.name}</Link>
+             </div>
+       )
+      }
+   }
+const mapStateToProps = (state, props)=>{
+        console.log('postshow params', props.match.params.id)
+return {
+         postComments:state.comments.filter(comment=> comment.postId == props.match.params.id),
+         post : state.posts.find(post=> post.id == props.match.params.id),
+         users : state.users
     }
 }
+export default connect(mapStateToProps)(Postshow)
 
-export default Postshow
+
+
+
+
+
+
+

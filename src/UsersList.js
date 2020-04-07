@@ -1,34 +1,20 @@
 import React from 'react'
-import axios from 'axios'
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { startGetUsers } from './action/usersAction'
 class UsersList extends React.Component {
-    constructor() {
-        console.log('constructor')
-        super() 
-        this.state = {
-            users: [] 
+    componentDidMount() {
+        if (this.props.users.length === 0) {
+            this.props.dispatch(startGetUsers())
         }
     }
-
-    //life cycle methods
-    componentDidMount(){ //immediately called only once after render method gets executed
-       axios.get('https://jsonplaceholder.typicode.com/users')
-            .then((response) => {
-                const users = response.data 
-                this.setState({users})
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
-
- 
-    render() {
+    
+   render() {
         console.log('render')
         return (
             <div> 
-                <h1> Listing users={ this.state.users.length} </h1>
-                <ul>{this.state.users.map( user => {
+                <h1> Listing users={ this.props.users.length} </h1>
+                <ul>{this.props.users.map( user => {
                     return <li key={user.id}><Link to={`/users/${user.id}`}>{ user.name }</Link></li>
                         
                 })} 
@@ -39,4 +25,9 @@ class UsersList extends React.Component {
         )
     }
 }
-export default UsersList
+const mapStateToProps = (state) => {
+    return {
+        users: state.users
+    }
+}
+export default connect(mapStateToProps)(UsersList)

@@ -1,52 +1,31 @@
 import React from 'react' 
-import axios from 'axios'
+import { connect } from 'react-redux'
+//import axios from 'axios'
 import {Link} from 'react-router-dom'
 class UserShow extends React.Component {
-    constructor(){
-        super()
-        this.state={
-            user:[],
-            posts:[]
-        }
-    }
-    componentDidMount(){
-        const id = this.props.match.params.id
-        
-        axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
-        .then((response)=>{
-            const user=response.data
-            this.setState({user})
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-
-        axios.get(`https://jsonplaceholder.typicode.com/posts?userId=${id}`)
-        .then((response) => {
-            const posts = response.data
-            this.setState({posts})
-        })
-        .catch((err) =>{
-            console.log(err)
-        })
-
-     
-        
-    }
    
-    render() {
+     render() {
         return (
-            <div> 
-                <h2>UserName:{this.state.user.name}</h2>
-                <h2>Posts Written By User</h2>
-                <ul>
-                    {this.state.posts.map(post =>{
-                        return <li key={post.id}><Link to={`/posts/${this.state.user.id}`}>{post.title}</Link></li>
-                    })}
-                </ul>
-            </div> 
+            <div>
+            {
+                this.props.user ? ( <div> 
+                    <h2>User Show - {this.props.match.params.id}</h2>
+                    <p> {this.props.user.name} - {this.props.user.email}</p> 
+                </div> ) : (
+                    <p> loading....</p>
+                )
+            }
+            
+        </div>
         )
     }
 }
 
-export default UserShow
+const mapStateToProps = (state, props) => {
+    return {
+        user: state.users.find(user => user.id == props.match.params.id)
+    }
+}
+export default connect(mapStateToProps)(UserShow)
+
+//export default UserShow
